@@ -19,12 +19,15 @@ function App() {
       <Hero />
       <About/>
       <Features />
-      <HowItWorks />
-      {/* <Pricing /> */}
+       <FAQ/>
+     
+      <Pricing />
+       <HowItWorks />
       {/* <Blog /> */}
-      <Gallery/>
-      <FAQ/>
+      
+     
       <Contact/>
+      <Gallery/>
       <Footer />
     </div>
   );

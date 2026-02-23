@@ -1,159 +1,310 @@
-// components/Pricing.js
-import React, { useState } from 'react';
+// components/PortfolioShowcase.js
+import React, { useState, useEffect } from 'react';
+import { ChevronRight, Building2, Award, Users, Home, Calendar, Ruler } from 'lucide-react';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
-const Pricing = () => {
-  const [billingCycle, setBillingCycle] = useState('monthly');
+const PortfolioShowcase = () => {
+  const [activeFilter, setActiveFilter] = useState('all');
   
-  const plans = [
+  // Initialize AOS
+  useEffect(() => {
+    AOS.init({
+      duration: 800,
+      once: true,
+      offset: 100,
+      easing: 'ease-out-cubic'
+    });
+  }, []);
+
+  // Primary and Secondary Colors
+  const primaryColor = '#F97316'; // Orange-500
+  const secondaryColor = '#1E293B'; // Slate-800
+
+  const projects = [
     {
-      name: "Starter",
-      description: "Perfect for occasional use",
-      monthlyPrice: "$9",
-      yearlyPrice: "$90",
-      features: [
-        "Up to 10 wishes per month",
-        "Basic templates",
-        "Standard support",
-        "Basic analytics"
-      ],
-      popular: false
+      id: 1,
+      title: "Vizag Heights",
+      subtitle: "Luxury Apartments",
+      category: "apartment",
+      image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      area: "2450 sq.ft",
+      completion: "2024",
+      bedrooms: "4 BHK"
     },
     {
-      name: "Professional",
-      description: "Great for regular users",
-      monthlyPrice: "$19",
-      yearlyPrice: "$190",
-      features: [
-        "Up to 50 wishes per month",
-        "All templates",
-        "Premium effects",
-        "Advanced analytics",
-        "Priority support"
-      ],
-      popular: true
+      id: 2,
+      title: "Beachfront Villa",
+      subtitle: "Premium Residence",
+      category: "villa",
+      image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      area: "3800 sq.ft",
+      completion: "2023",
+      bedrooms: "5 BHK"
     },
     {
-      name: "Enterprise",
-      description: "For businesses & heavy users",
-      monthlyPrice: "$49",
-      yearlyPrice: "$490",
-      features: [
-        "Unlimited wishes",
-        "All templates & effects",
-        "Custom branding",
-        "Advanced analytics",
-        "Dedicated support",
-        "API access"
-      ],
-      popular: false
-    }
+      id: 3,
+      title: "Green Valley",
+      subtitle: "Gated Community",
+      category: "apartment",
+      image: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      area: "1850 sq.ft",
+      completion: "2024",
+      bedrooms: "3 BHK"
+    },
+    {
+      id: 4,
+      title: "Sea View Towers",
+      subtitle: "Luxury Apartments",
+      category: "apartment",
+      image: "https://images.unsplash.com/photo-1580041065738-e72023775cdc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      area: "2100 sq.ft",
+      completion: "2023",
+      bedrooms: "3 BHK"
+    },
+    {
+      id: 5,
+      title: "Hilltop Residences",
+      subtitle: "Premium Apartments",
+      category: "apartment",
+      image: "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      area: "1650 sq.ft",
+      completion: "2024",
+      bedrooms: "3 BHK"
+    },
+    {
+      id: 6,
+      title: "Lakeview Homes",
+      subtitle: "Modern Villas",
+      category: "villa",
+      image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      area: "2950 sq.ft",
+      completion: "2023",
+      bedrooms: "4 BHK"
+    },
+   
   ];
 
+  const filters = [
+    { id: 'all', label: 'ALL' },
+    { id: 'apartment', label: 'APARTMENTS' },
+    { id: 'villa', label: 'VILLAS' }
+  ];
+
+  const filteredProjects = activeFilter === 'all' 
+    ? projects 
+    : projects.filter(project => project.category === activeFilter);
+
   return (
-    <section id="pricing" className="py-16 bg-gray-50">
-      <div className="container mx-auto px-6 max-w-6xl">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-3">
-            Premium Stats & Pricing
+    <section id="projects" className="py-24 bg-gradient-to-b from-white to-gray-50 overflow-hidden">
+      <div className="container mx-auto px-6 max-w-7xl">
+        
+        {/* Header with Premium Typography */}
+        <div className="text-center mb-16" data-aos="fade-down">
+          <p 
+            className="text-sm tracking-[4px] font-semibold mb-3"
+            style={{ color: primaryColor }}
+          >
+            VIZAG PREMIUM HOMES
+          </p>
+
+          <h2 
+            className="text-4xl md:text-5xl font-bold mb-4"
+            style={{ color: secondaryColor }}
+          >
+            Modern <span style={{ color: primaryColor }}>Living Spaces</span>
           </h2>
-          <div className="w-16 h-1 bg-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Choose the plan that best fits your needs and experience the full power of our platform
+
+          <p className="max-w-2xl mx-auto text-gray-600 text-lg">
+            Discover our finest collection of luxury apartments and villas in Vizag
           </p>
           
-          {/* Billing Toggle */}
-          <div className="mt-8 inline-flex bg-white border border-gray-300 rounded-lg p-1">
-            <button 
-              className={`px-6 py-2 rounded-md font-medium transition-colors duration-300 ${
-                billingCycle === 'monthly' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
-              onClick={() => setBillingCycle('monthly')}
-            >
-              Monthly
-            </button>
-            <button 
-              className={`px-6 py-2 rounded-md font-medium transition-colors duration-300 ${
-                billingCycle === 'yearly' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
-              onClick={() => setBillingCycle('yearly')}
-            >
-              Yearly (Save 15%)
-            </button>
-          </div>
+          <div 
+            className="w-24 h-1 mx-auto mt-6 rounded-full"
+            style={{ 
+              background: `linear-gradient(90deg, ${primaryColor}, ${primaryColor}80, transparent)` 
+            }}
+          ></div>
         </div>
-        
-        {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {plans.map((plan, index) => (
-            <div 
-              key={index}
-              className={`bg-white rounded-lg border ${
-                plan.popular 
-                  ? 'border-blue-500 shadow-lg relative' 
-                  : 'border-gray-200 shadow-sm'
-              } hover:shadow-md transition-shadow duration-300`}
+
+        {/* Premium Filter Navigation */}
+        <div className="flex flex-wrap justify-center gap-3 mb-16" data-aos="fade-up" data-aos-delay="100">
+          {filters.map((filter) => (
+            <button
+              key={filter.id}
+              onClick={() => setActiveFilter(filter.id)}
+              className="relative group overflow-hidden px-8 py-3"
             >
-              {plan.popular && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium">
-                  Most Popular
-                </div>
-              )}
+              <span className={`relative z-10 text-sm font-medium tracking-wider transition-all duration-500 ${
+                activeFilter === filter.id ? 'text-white' : 'text-gray-600'
+              }`}>
+                {filter.label}
+              </span>
               
-              <div className="p-6">
-                {/* Plan Header */}
-                <div className="text-center mb-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
-                  <p className="text-gray-600 text-sm">{plan.description}</p>
-                  <div className="mt-4">
-                    <span className="text-3xl font-bold text-gray-900">
-                      {billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice}
-                    </span>
-                    <span className="text-gray-600">
-                      {billingCycle === 'monthly' ? '/month' : '/year'}
-                    </span>
+              {/* Animated Background */}
+              <div 
+                className={`absolute inset-0 transition-all duration-500 ${
+                  activeFilter === filter.id
+                    ? 'opacity-100'
+                    : 'opacity-0 group-hover:opacity-10'
+                }`}
+                style={{ 
+                  background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)` 
+                }}
+              ></div>
+              
+              {/* Bottom Border */}
+              <div 
+                className={`absolute bottom-0 left-0 h-0.5 transition-all duration-500 ${
+                  activeFilter === filter.id ? 'w-full' : 'w-0 group-hover:w-full'
+                }`}
+                style={{ background: primaryColor }}
+              ></div>
+            </button>
+          ))}
+        </div>
+
+        {/* Projects Grid - Premium Masonry Style */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredProjects.map((project, index) => (
+            <div 
+              key={project.id}
+              data-aos="fade-up"
+              data-aos-delay={index * 100}
+              className="group relative bg-white shadow-lg hover:shadow-2xl transition-all duration-700"
+            >
+              {/* Image Container */}
+              <div className="relative overflow-hidden" style={{ height: '280px' }}>
+                <img 
+                  src={project.image} 
+                  alt={project.title}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                />
+                
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                {/* Bedrooms Badge */}
+                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 text-sm font-medium"
+                  style={{ color: secondaryColor }}
+                >
+                  {project.bedrooms}
+                </div>
+                
+                {/* Hover View Button */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
+                  <button 
+                    className="bg-white px-6 py-3 font-medium text-sm tracking-wider transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 hover:shadow-xl flex items-center gap-2"
+                    style={{ color: secondaryColor }}
+                  >
+                    <span>VIEW DETAILS</span>
+                    <ChevronRight size={16} style={{ color: primaryColor }} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Project Info - Premium Card Style */}
+              <div className="p-6 bg-white relative">
+                {/* Category Tag */}
+                <div 
+                  className="absolute -top-3 left-6 px-4 py-1 text-xs font-medium tracking-wider text-white"
+                  style={{ 
+                    background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)`,
+                    boxShadow: `0 4px 12px ${primaryColor}40`
+                  }}
+                >
+                  {project.category === 'apartment' ? 'APARTMENT' : 'LUXURY VILLA'}
+                </div>
+
+                {/* Title & Subtitle */}
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">
+                    {project.title}
+                  </h3>
+                  <p className="text-gray-500 text-sm">
+                    {project.subtitle}
+                  </p>
+                </div>
+
+                {/* Project Details */}
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <Ruler size={14} style={{ color: primaryColor }} />
+                    <span>{project.area}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <Calendar size={14} style={{ color: primaryColor }} />
+                    <span>{project.completion}</span>
                   </div>
                 </div>
-                
-                {/* Features List */}
-                <ul className="space-y-3 mb-6">
-                  {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-start">
-                      <svg className="w-5 h-5 text-blue-500 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span className="text-gray-700 text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                
-                {/* CTA Button */}
-                <button 
-                  className={`w-full py-3 rounded-md font-medium transition-colors duration-300 ${
-                    plan.popular 
-                      ? 'bg-blue-500 text-white hover:bg-blue-600' 
-                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200 border border-gray-300'
-                  }`}
-                >
-                  Get Started
-                </button>
+
+                {/* Decorative Line */}
+                <div 
+                  className="w-12 h-0.5 transition-all duration-500 group-hover:w-full"
+                  style={{ background: primaryColor }}
+                ></div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Additional Info */}
-        <div className="text-center mt-8">
-          <p className="text-gray-600 text-sm">
-            All plans include a 14-day free trial. No credit card required.
-          </p>
+        {/* View All Button - Premium Style */}
+        <div className="text-center mt-16" data-aos="fade-up" data-aos-delay="400">
+          <button className="relative group inline-flex items-center justify-center overflow-hidden px-10 py-4 transition-all duration-500">
+            
+            {/* Background Layers */}
+            <span 
+              className="absolute inset-0 border-2 transition-all duration-500"
+              style={{ borderColor: secondaryColor }}
+            ></span>
+            
+            <span 
+              className="absolute inset-0 transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"
+              style={{ background: secondaryColor }}
+            ></span>
+            
+            {/* Text + Arrow */}
+            <span className="relative z-10 flex items-center space-x-3 text-gray-900 group-hover:text-white transition-colors duration-500">
+              <span className="font-medium tracking-wider">VIEW ALL PROPERTIES</span>
+              <ChevronRight 
+                size={20} 
+                className="group-hover:translate-x-2 transition-transform duration-300"
+                style={{ color: primaryColor }}
+              />
+            </span>
+          </button>
         </div>
+
+    
+
+      
+
+        {/* Decorative Elements */}
+        <div className="absolute top-20 left-0 w-64 h-64 bg-orange-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob -z-10"></div>
+        <div className="absolute bottom-20 right-0 w-64 h-64 bg-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000 -z-10"></div>
       </div>
+
+      {/* Custom Animations */}
+      <style jsx>{`
+        @keyframes blob {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(30px, -30px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+        
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+      `}</style>
+
+      {/* Font imports */}
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     </section>
   );
 };
 
-export default Pricing;
+export default PortfolioShowcase;

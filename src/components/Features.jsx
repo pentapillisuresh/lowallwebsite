@@ -1,106 +1,129 @@
-// components/Features.js
-import React from 'react';
+import React, { useEffect } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
-const Features = () => {
-  const features = [
+const Services = () => {
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: true,
+    });
+  }, []);
+
+  const services = [
     {
-      title: "Upload Your Wish",
-      description: "Express your feelings through wallpapers and short messages that spread positivity."
+      title: "Building Construction",
+      image:
+        "./images/service3.jpg",
+      description:
+        "High-quality residential and commercial construction with modern engineering standards and durable materials.",
     },
     {
-      title: "Limited-Time Display",
-      description: "Each wallpaper is live for 15 minutes, creating exclusivity and excitement."
+      title: "Architecture Design",
+      image:
+         "./images/service2.jpeg",
+      description:
+        "Innovative and functional architectural designs tailored to meet client needs and project goals.",
     },
     {
-      title: "Premium Slots",
-      description: "Book special hours during festivals or birthdays to feature your wish at the top."
+      title: "Building Renovation",
+      image:
+        "https://images.pexels.com/photos/8961300/pexels-photo-8961300.jpeg",
+      description:
+        "Transforming old spaces into modern, efficient, and aesthetically pleasing environments.",
     },
-    {
-      title: "Slot Resale Marketplace",
-      description: "Resell your reserved slot to others — set price, chat, and earn instantly."
-    },
-    {
-      title: "Community Engagement",
-      description: "Connect globally through likes, comments, and shares — make friends through wishes."
-    },
-    {
-      title: "Admin Moderation",
-      description: "Every submission is reviewed for safety and positivity before going live."
-    }
+  {
+  title: "Interior Design",
+  image:
+    "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg",
+  description:
+    "Creative and modern interior design solutions that enhance comfort, functionality, and aesthetic appeal for residential and commercial spaces.",
+},
   ];
 
   return (
-    <section id="features" className="py-16 bg-white relative">
-      {/* Background Pattern */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center opacity-5"
-        style={{
-          backgroundImage: 'url("https://images.pexels.com/photos/1939485/pexels-photo-1939485.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1")'
-        }}
-      ></div>
-      
-      <div className="container mx-auto px-6 max-w-6xl relative z-10">
-        {/* Header Section */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Features That Make Every Celebration Special
+    <section id="services"
+      className="py-20 bg-[#eef3f7]"
+      data-aos="fade-up"
+    >
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Header */}
+        <div className="text-center mb-16" data-aos="fade-up">
+          <p className="text-sm tracking-[4px] text-orange-500 font-semibold mb-3">
+            OUR SERVICES
+          </p>
+
+          <h2 className="text-4xl font-bold text-[#0f172a] mb-6">
+            Our Construction Services
           </h2>
-          <div className="w-20 h-1 bg-yellow-500 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            From limited-time wallpapers to community engagement and marketplace features
+
+          <p className="max-w-3xl mx-auto text-gray-600 text-lg">
+            We deliver professional construction solutions using modern
+            technology, skilled workforce, and quality materials.
           </p>
         </div>
-        
-        {/* Features Grid - 3 columns layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {features.map((feature, index) => (
-            <div 
+
+        {/* Flip Cards */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {services.map((service, index) => (
+            <div
               key={index}
-              className="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 hover:border-yellow-400 group"
+              data-aos="zoom-in"
+              data-aos-delay={index * 100}
+              className="group perspective"
             >
-              {/* Number Indicator */}
-              <div className="flex items-center mb-4">
-                <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center mr-3">
-                  <span className="text-white font-bold text-sm">{index + 1}</span>
+              <div className="relative h-[340px] w-full transition-transform duration-700 transform-style-preserve-3d group-hover:rotate-y-180">
+
+                {/* Front Side */}
+                <div className="absolute w-full h-full backface-hidden rounded-2xl overflow-hidden shadow-xl">
+                  <img
+                    src={service.image}
+                    alt={service.title}
+                    className="w-full h-full object-cover"
+                  />
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex items-end">
+  <h3 className="text-white text-xl font-bold px-6 pb-8">
+    {service.title}
+  </h3>
+</div>
                 </div>
-                <div className="w-6 h-1 bg-yellow-500 group-hover:w-12 transition-all duration-300"></div>
-              </div>
-              
-              {/* Content */}
-              <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {feature.description}
-                </p>
+
+                {/* Back Side */}
+                <div className="absolute w-full h-full bg-[#0f172a] text-white rounded-2xl shadow-xl rotate-y-180 backface-hidden flex flex-col items-center justify-center p-6 text-center">
+                  <h3 className="text-orange-500 text-xl font-bold mb-4">
+                    {service.title}
+                  </h3>
+                  <p className="text-gray-300 text-sm leading-relaxed">
+                    {service.description}
+                  </p>
+                </div>
+
               </div>
             </div>
           ))}
         </div>
-
-        {/* Stats Section */}
-        <div className="bg-yellow-500 rounded-xl p-8 shadow-lg">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div className="text-white">
-              <div className="text-4xl font-bold mb-2">15 min</div>
-              <div className="text-lg font-medium opacity-90">Per Wish Display</div>
-            </div>
-            
-            <div className="text-white">
-              <div className="text-4xl font-bold mb-2">1000+</div>
-              <div className="text-lg font-medium opacity-90">Weekly Users</div>
-            </div>
-            
-            <div className="text-white">
-              <div className="text-4xl font-bold mb-2">99%</div>
-              <div className="text-lg font-medium opacity-90">Positive Reviews</div>
-            </div>
-          </div>
-        </div>
       </div>
+
+      {/* Custom Flip Styles */}
+      <style jsx>{`
+        .perspective {
+          perspective: 1000px;
+        }
+        .transform-style-preserve-3d {
+          transform-style: preserve-3d;
+        }
+        .rotate-y-180 {
+          transform: rotateY(180deg);
+        }
+        .backface-hidden {
+          backface-visibility: hidden;
+        }
+        .group:hover .group-hover\\:rotate-y-180 {
+          transform: rotateY(180deg);
+        }
+      `}</style>
     </section>
   );
 };
 
-export default Features;
+export default Services;

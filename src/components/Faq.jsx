@@ -1,91 +1,58 @@
-import React from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+// components/ConstructionHeroVideo.js
+import React from "react";
 
-const FAQ = () => {
-    const faqs = [
-        {
-            question: "How to book a premium slot?",
-            answer: "Go to 'Premium Slots,' choose a plan, and confirm payment."
-        },
-        {
-            question: "How to resell a slot?",
-            answer: "Visit 'My Slots' and tap 'Resell Slot.'"
-        },
-        {
-            question: "What if payment fails?",
-            answer: "Refunds are processed within 24 hours."
-        },
-        {
-            question: "How long does my wish stay visible?",
-            answer: "Each wish is displayed for 15 minutes to maintain exclusivity and engagement."
-        },
-        {
-            question: "Can I customize my wallpaper?",
-            answer: "Yes, you can upload custom images and add personalized messages to your wallpapers."
-        }
-    ];
+const ConstructionHeroVideo = () => {
+  const primaryColor = "#F97316"; // Orange
+  const secondaryColor = "#1E293B"; // Dark Blue
 
-    const [openIndex, setOpenIndex] = React.useState(0);
+  return (
+    <section className="relative w-full h-screen overflow-hidden">
+      
+      {/* Background Video */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+      >
+        <source src="./images/video3.mp4" type="video/mp4" />
+      </video>
 
-    return (
-        <section id="faq" className="py-16 bg-white">
-            <div className="container mx-auto px-6 max-w-4xl">
-                {/* Header */}
-                <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-3">
-                        Frequently Asked Questions
-                    </h2>
-                    <div className="w-16 h-1 bg-blue-500 mx-auto mb-4"></div>
-                    <p className="text-gray-600">
-                        Everything you need to know about LoWall
-                    </p>
-                </div>
+      {/* Dark Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80"></div>
 
-                {/* FAQ Items */}
-                <div className="space-y-4">
-                    {faqs.map((faq, index) => (
-                        <div
-                            key={index}
-                            className="bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors duration-200"
-                        >
-                            <button
-                                className="w-full px-6 py-4 text-left flex items-center justify-between"
-                                onClick={() => setOpenIndex(openIndex === index ? -1 : index)}
-                            >
-                                <h3 className="text-base font-semibold text-gray-900 pr-4">
-                                    {faq.question}
-                                </h3>
-                                {openIndex === index ? (
-                                    <ChevronUp className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                                ) : (
-                                    <ChevronDown className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                                )}
-                            </button>
+      {/* Content */}
+      <div className="relative z-10 flex items-center justify-center h-full text-center px-6">
+        <div className="max-w-5xl text-white">
 
-                            {openIndex === index && (
-                                <div className="px-6 pb-4">
-                                    <div className="w-8 h-0.5 bg-blue-500 mb-3"></div>
-                                    <p className="text-gray-600 text-sm leading-relaxed">
-                                        {faq.answer}
-                                    </p>
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                </div>
+          {/* Main Heading */}
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6">
+            Building the Future
+            <br />
+            <span style={{ color: primaryColor }}>
+              with Precision & Trust
+            </span>
+          </h1>
 
-                {/* Bottom Section */}
-                <div className="text-center mt-8">
-                    <p className="text-gray-500 text-sm mb-4">
-                        Still have questions? We're here to help.
-                    </p>
-                    <button className="px-6 py-2.5 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 transition-colors duration-300">
-                        Contact Support
-                    </button>
-                </div>
-            </div>
-        </section>
-    );
+          {/* Sub Heading */}
+          <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto leading-relaxed">
+            Delivering landmark residential and commercial projects
+            with uncompromising quality, innovative engineering,
+            and structural excellence that stands the test of time.
+          </p>
+
+          {/* Tagline */}
+          <div className="flex items-center justify-center gap-4 text-xs md:text-sm tracking-[4px] text-gray-300">
+            <span className="w-12 h-px" style={{ backgroundColor: primaryColor }}></span>
+            <span>RSK CONSTRUCTIONS • QUALITY • INTEGRITY • COMMITMENT</span>
+            <span className="w-12 h-px" style={{ backgroundColor: primaryColor }}></span>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
 };
 
-export default FAQ;
+export default ConstructionHeroVideo;

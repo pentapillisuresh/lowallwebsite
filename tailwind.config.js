@@ -2,40 +2,22 @@
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,jsx}",
+    "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
     extend: {
-      fontFamily: {
-        'serif': ['Georgia', 'Cambria', 'Times New Roman', 'serif'],
-        'sans': ['Roboto', 'Arial', 'sans-serif'],
+        fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
       },
-      animation: {
-        'fadeIn': 'fadeIn 1s ease-in-out',
-        'slideUp': 'slideUp 0.8s ease-out',
-        'slideDown': 'slideDown 0.3s ease-out',
-        'fadeInUp': 'fadeInUp 0.8s ease-out forwards',
-      },
-      keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
-        slideUp: {
-          '0%': { transform: 'translateY(30px)', opacity: '0' },
-          '100%': { transform: 'translateY(0)', opacity: '1' },
-        },
-        slideDown: {
-          '0%': { transform: 'translateY(-10px)', opacity: '0' },
-          '100%': { transform: 'translateY(0)', opacity: '1' },
-        },
-        fadeInUp: {
-          '0%': { transform: 'translateY(40px)', opacity: '0' },
-          '100%': { transform: 'translateY(0)', opacity: '1' },
-        },
+      colors: {
+        primary: '#FF6B35',
+        secondary: '#0C1F38',
+        'primary-light': '#ff8c5c',
+        'primary-dark': '#e54e1b',
+        'secondary-light': '#1a3352',
+        'secondary-dark': '#071225',
       },
     },
   },
   plugins: [],
 }
-

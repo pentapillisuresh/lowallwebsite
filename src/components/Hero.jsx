@@ -1,148 +1,491 @@
 // components/Hero.js
-import React, { useState, useEffect } from 'react';
-import { Download, Play, ArrowLeft, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [animationDirection, setAnimationDirection] = useState('next');
+  const sectionRef = useRef(null);
+  const slideTimerRef = useRef(null);
 
-  const bannerItems = [
-    {
-      id: 1,
-      title: "Share Your Wishes",
-      subtitle: "Create Beautiful Digital Moments",
-      description: "Transform your heartfelt messages into stunning live wallpapers that appear on screens worldwide",
-      image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-      buttonText: "Start Sharing"
-    },
-    {
-      id: 2,
-      title: "Global Celebrations", 
-      subtitle: "Connect Across Borders",
-      description: "Join a worldwide community sharing wishes, celebrations, and special moments in real-time",
-      image: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-      buttonText: "Join Community"
-    },
-    {
-      id: 3,
-      title: "Premium Experience",
-      subtitle: "Exclusive Features",
-      description: "Access premium slots, advanced customization, and enhanced visibility for your special moments",
-      image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-      buttonText: "Explore Premium"
-    }
-  ];
+ const bannerItems = [
+  {
+    id: 1,
+    title: "Constructing the Future",
+    subtitle: "Innovative Civil Engineering Solutions for Modern Infrastructure",
+    image: "/images/banner1.jpg"
+  },
+  {
+    id: 2,
+    title: "Engineering Excellence",
+    subtitle: "Precision. Quality. Trust. Built to Last.",
+    image: "/images/banner2.jpg"
+  },
+  {
+    id: 3,
+    title: "Built on Strength & Integrity",
+    subtitle: "Crafting Infrastructure that Shapes Tomorrow",
+    image: "/images/banner3.jpg"
+  }
+];
 
+  // Orange primary color
+  const primaryColor = '#F97316'; // Orange-500
+  const primaryColorLight = '#FB923C'; // Orange-400
+  const primaryColorDark = '#EA580C'; // Orange-600
+
+  // Handle parallax scroll effect
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % bannerItems.length);
-    }, 5000);
-    return () => clearInterval(interval);
+    const handleScroll = () => {
+      if (sectionRef.current) {
+        const rect = sectionRef.current.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        
+        const sectionTop = rect.top;
+        let progress = 0;
+        if (sectionTop < 0) {
+          progress = Math.min(1, Math.abs(sectionTop) / windowHeight);
+        }
+        
+        setScrollProgress(progress);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  return (
-   <section id="home" className="relative min-h-screen text-white overflow-hidden pt-24">
+  // Auto slide interval
+  useEffect(() => {
+    startAutoSlide();
+    return () => clearAutoSlide();
+  }, [currentSlide]);
 
-      {/* Banner Carousel */}
-      {bannerItems.map((item, index) => (
-        <div
-          key={item.id}
-          className={`absolute inset-0 transition-all duration-700 ease-in-out ${
-            index === currentSlide ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
-          {/* Background Image */}
-          <div className="absolute inset-0">
-            <img 
-              src={item.image}
-              alt={item.title}
-              className="w-full h-full object-cover"
+  const clearAutoSlide = () => {
+    if (slideTimerRef.current) {
+      clearInterval(slideTimerRef.current);
+    }
+  };
+
+  const startAutoSlide = () => {
+    clearAutoSlide();
+    slideTimerRef.current = setInterval(() => {
+      if (!isTransitioning) {
+        setAnimationDirection('next');
+        nextSlide();
+      }
+    }, 6000);
+  };
+
+  // Smooth slide transition
+  const changeSlide = (newIndex, direction = 'next') => {
+    if (isTransitioning) return;
+    
+    setAnimationDirection(direction);
+    setIsTransitioning(true);
+    setCurrentSlide(newIndex);
+    
+    // Reset auto slide timer
+    startAutoSlide();
+    
+    // Release transition lock after animation completes
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 1000);
+  };
+
+  const nextSlide = () => {
+    const newIndex = (currentSlide + 1) % bannerItems.length;
+    changeSlide(newIndex, 'next');
+  };
+
+  const prevSlide = () => {
+    const newIndex = (currentSlide - 1 + bannerItems.length) % bannerItems.length;
+    changeSlide(newIndex, 'prev');
+  };
+
+  // Calculate parallax values
+  const imageScale = 1 + (scrollProgress * 0.3);
+  const imageTranslateY = scrollProgress * 30;
+  const contentTranslateY = scrollProgress * 50;
+  const contentOpacity = Math.max(0, 1 - (scrollProgress * 1.5));
+
+  // Get animation classes based on direction
+  const getTitleAnimation = (index) => {
+    if (index !== currentSlide) return 'opacity-0';
+    
+    if (animationDirection === 'next') {
+      return 'animate-fadeInUp';
+    } else {
+      return 'animate-fadeInDown';
+    }
+  };
+
+  const getSubtitleAnimation = (index) => {
+    if (index !== currentSlide) return 'opacity-0';
+    
+    if (animationDirection === 'next') {
+      return 'animate-fadeInUp delay-200';
+    } else {
+      return 'animate-fadeInDown delay-200';
+    }
+  };
+
+  return (
+    <section 
+      id="home" 
+      ref={sectionRef}
+      className="relative h-screen text-white overflow-hidden"
+    >
+      {/* Background Images with Smooth Transition */}
+      <div className="absolute inset-0 z-0">
+        {bannerItems.map((item, index) => (
+          <div
+            key={item.id}
+            className="absolute inset-0 transition-all duration-1000 ease-out"
+            style={{ 
+              opacity: index === currentSlide ? 1 : 0,
+              transform: `scale(${imageScale}) translateY(${imageTranslateY}px)`,
+              transformOrigin: 'center center',
+              transition: 'opacity 1s cubic-bezier(0.65, 0, 0.35, 1), transform 0.1s linear'
+            }}
+          >
+            {/* Image with Ken Burns effect */}
+            <div 
+              className="w-full h-full transition-transform duration-10000 ease-out"
+              style={{
+                transform: index === currentSlide ? 'scale(1.05)' : 'scale(1)'
+              }}
+            >
+              <img 
+                src={item.image}
+                alt={item.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            
+            {/* Overlay gradient */}
+            <div 
+              className="absolute inset-0 transition-opacity duration-1000"
+              style={{
+                background: `linear-gradient(135deg, 
+                  rgba(0,0,0,0.6) 0%, 
+                  rgba(0,0,0,0.3) 50%, 
+                  rgba(0,0,0,0.2) 100%)`,
+                opacity: index === currentSlide ? 1 : 0
+              }}
             />
           </div>
+        ))}
+      </div>
 
-          {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-blue-800/70 to-blue-700/60"></div>
+      {/* Orange Gradient Overlay */}
+      <div 
+        className="absolute inset-0 z-10 mix-blend-overlay"
+        style={{
+          background: `linear-gradient(135deg, 
+            ${primaryColor}15 0%, 
+            ${primaryColorLight}10 50%, 
+            ${primaryColorDark}05 100%)`,
+        }}
+      />
 
-          {/* Content */}
-          <div className="relative z-10 container mx-auto px-6 h-full flex items-center">
-            <div className="max-w-4xl mx-auto w-full">
-              <div className="space-y-8">
-                <div className="space-y-6">
-                  <div className="space-y-4">
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                      {item.title}
-                    </h1>
-                    <h2 className="text-xl md:text-2xl text-blue-200 font-semibold">
-                      {item.subtitle}
-                    </h2>
-                    <p className="text-lg md:text-xl text-gray-100 leading-relaxed max-w-2xl">
-                      {item.description}
-                    </p>
-                  </div>
+      {/* Centered Content with AOS-style Animations */}
+      <div 
+        className="relative z-20 h-full flex items-center justify-center"
+        style={{
+          transform: `translateY(${contentTranslateY}px)`,
+          opacity: contentOpacity,
+          transition: 'transform 0.1s linear, opacity 0.3s ease-out'
+        }}
+      >
+        <div className="text-center px-4 max-w-7xl mx-auto">
+          {bannerItems.map((item, index) => (
+            <div
+              key={item.id}
+              className="transition-all duration-500"
+              style={{
+                display: index === currentSlide ? 'block' : 'none'
+              }}
+            >
+              <div className="space-y-6">
+                {/* Construction/Civil Engineering Title with Serif Font - White Color - Reduced Size */}
+                <h1 className="font-bold tracking-normal">
+                  <span 
+                    className={`text-5xl md:text-6xl lg:text-7xl inline-block ${getTitleAnimation(index)}`}
+                    style={{
+                      fontFamily: "'Playfair Display', 'Times New Roman', Georgia, serif",
+                      fontWeight: 700,
+                      color: '#FFFFFF',
+                      textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
+                      lineHeight: '1.2',
+                      letterSpacing: 'normal'
+                    }}
+                  >
+                    {item.title}
+                  </span>
+                </h1>
+                
+                {/* Subtitle with AOS-style Animation */}
+                <h2 
+                  className={`text-xl md:text-2xl lg:text-3xl max-w-4xl mx-auto leading-relaxed ${getSubtitleAnimation(index)}`}
+                  style={{
+                    fontFamily: "'Montserrat', 'Helvetica', 'Arial', sans-serif",
+                    fontWeight: 300,
+                    letterSpacing: '1px',
+                    color: 'rgba(255, 255, 255, 0.95)',
+                    textShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
+                    lineHeight: '1.6'
+                  }}
+                >
+                  {item.subtitle}
+                </h2>
 
-                  {/* Buttons */}
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <button className="flex items-center justify-center space-x-3 px-8 py-4 bg-yellow-500 text-blue-900 font-semibold rounded-lg hover:bg-yellow-400 transition-all duration-300 shadow-lg text-base">
-                      <Download className="w-5 h-5" />
-                      <span>Download App</span>
-                    </button>
-                    <button className="flex items-center justify-center space-x-3 px-8 py-4 bg-white text-blue-900 font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300 border border-white text-base">
-                      <Play className="w-5 h-5" />
-                      <span>Watch Demo</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Stats Section */}
-                <div className="grid grid-cols-3 gap-4 max-w-md">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-yellow-400">15 min</div>
-                    <div className="text-blue-200 text-sm">Display Time</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-yellow-400">1000+</div>
-                    <div className="text-blue-200 text-sm">Active Users</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-yellow-400">24/7</div>
-                    <div className="text-blue-200 text-sm">Live Support</div>
-                  </div>
-                </div>
+                {/* Decorative Orange Line with Animation */}
+                <div 
+                 
+                />
               </div>
             </div>
-          </div>
-        </div>
-      ))}
-
-      {/* Carousel Indicators */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
-        <div className="flex space-x-3">
-          {bannerItems.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentSlide 
-                  ? 'bg-yellow-400 scale-125' 
-                  : 'bg-white/60 hover:bg-white/80'
-              }`}
-            />
           ))}
         </div>
       </div>
 
-      {/* Navigation Arrows */}
+      {/* Premium Navigation Arrows with Orange Theme */}
       <button
-        onClick={() => setCurrentSlide((prev) => (prev - 1 + bannerItems.length) % bannerItems.length)}
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg p-3 transition-all duration-300 border border-white/30"
+        onClick={prevSlide}
+        disabled={isTransitioning}
+        className="absolute left-6 md:left-10 top-1/2 -translate-y-1/2 z-30 group"
+        style={{
+          opacity: Math.max(0, 1 - scrollProgress * 3),
+          transition: 'opacity 0.3s ease-out'
+        }}
       >
-        <ArrowLeft className="w-5 h-5" />
+        <div className="relative">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-md rounded-full transform group-hover:scale-110 transition-all duration-500"></div>
+          
+          <div 
+            className="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-full border-2 transition-all duration-500"
+            style={{
+              borderColor: `rgba(249, 115, 22, ${isTransitioning ? 0.3 : 0.6})`,
+              background: 'rgba(0, 0, 0, 0.3)',
+              boxShadow: `0 4px 20px ${primaryColor}20`
+            }}
+          >
+            <ChevronLeft 
+              className="w-5 h-5 md:w-7 md:h-7 transition-all duration-500 group-hover:scale-110 group-hover:translate-x-[-2px]"
+              style={{
+                color: primaryColor,
+                filter: `drop-shadow(0 2px 4px ${primaryColor}40)`
+              }}
+            />
+          </div>
+          
+          <div 
+            className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-40 transition-opacity duration-500 blur-xl"
+            style={{
+              background: `radial-gradient(circle, ${primaryColor} 0%, transparent 70%)`
+            }}
+          />
+        </div>
       </button>
+
       <button
-        onClick={() => setCurrentSlide((prev) => (prev + 1) % bannerItems.length)}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg p-3 transition-all duration-300 border border-white/30"
+        onClick={nextSlide}
+        disabled={isTransitioning}
+        className="absolute right-6 md:right-10 top-1/2 -translate-y-1/2 z-30 group"
+        style={{
+          opacity: Math.max(0, 1 - scrollProgress * 3),
+          transition: 'opacity 0.3s ease-out'
+        }}
       >
-        <ArrowRight className="w-5 h-5" />
+        <div className="relative">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-md rounded-full transform group-hover:scale-110 transition-all duration-500"></div>
+          
+          <div 
+            className="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-full border-2 transition-all duration-500"
+            style={{
+              borderColor: `rgba(249, 115, 22, ${isTransitioning ? 0.3 : 0.6})`,
+              background: 'rgba(0, 0, 0, 0.3)',
+              boxShadow: `0 4px 20px ${primaryColor}20`
+            }}
+          >
+            <ChevronRight 
+              className="w-5 h-5 md:w-7 md:h-7 transition-all duration-500 group-hover:scale-110 group-hover:translate-x-[2px]"
+              style={{
+                color: primaryColor,
+                filter: `drop-shadow(0 2px 4px ${primaryColor}40)`
+              }}
+            />
+          </div>
+          
+          <div 
+            className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-40 transition-opacity duration-500 blur-xl"
+            style={{
+              background: `radial-gradient(circle, ${primaryColor} 0%, transparent 70%)`
+            }}
+          />
+        </div>
       </button>
+
+      {/* Premium Scroll Indicator with Orange Theme */}
+      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20">
+        <div 
+          className="flex flex-col items-center gap-3"
+          style={{
+            opacity: Math.max(0, 1 - scrollProgress * 3),
+            transform: `translateY(${scrollProgress * 20}px)`,
+            transition: 'opacity 0.3s ease-out, transform 0.1s linear'
+          }}
+        >
+          <span 
+            className="text-white/70 text-xs uppercase tracking-[0.3em] font-light"
+            style={{
+              fontFamily: "'Montserrat', sans-serif",
+              letterSpacing: '0.3em'
+            }}
+          >
+            Scroll
+          </span>
+          <div className="relative">
+            <div className="w-6 h-10 rounded-full border border-white/30 flex items-start justify-center p-2">
+              <div 
+                className="w-1 h-1.5 rounded-full animate-bounce"
+                style={{
+                  background: `linear-gradient(to bottom, ${primaryColorLight}, ${primaryColor})`
+                }}
+              />
+            </div>
+            <div 
+              className="absolute inset-0 rounded-full animate-pulse"
+              style={{
+                boxShadow: `0 0 20px ${primaryColor}`,
+                opacity: 0.3
+              }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Premium Carousel Indicators with Orange Theme */}
+      <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 z-20">
+        <div 
+          className="flex space-x-4"
+          style={{
+            opacity: Math.max(0, 1 - scrollProgress * 3),
+            transition: 'opacity 0.3s ease-out'
+          }}
+        >
+          {bannerItems.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => !isTransitioning && changeSlide(index, index > currentSlide ? 'next' : 'prev')}
+              className="group relative"
+              disabled={isTransitioning}
+            >
+              <div 
+                className={`transition-all duration-500 ${
+                  index === currentSlide 
+                    ? 'w-8' 
+                    : 'w-2 group-hover:w-4'
+                }`}
+              >
+                <div 
+                  className={`h-2 rounded-full transition-all duration-500 ${
+                    index === currentSlide 
+                      ? `bg-gradient-to-r from-orange-400 to-orange-600` 
+                      : 'bg-white/50 group-hover:bg-white/80'
+                  }`}
+                  style={{
+                    boxShadow: index === currentSlide ? `0 0 15px ${primaryColor}` : 'none'
+                  }}
+                />
+              </div>
+              
+              {index === currentSlide && (
+                <div 
+                  className="absolute inset-0 rounded-full blur-md -z-10"
+                  style={{
+                    background: `radial-gradient(circle, ${primaryColor} 0%, transparent 70%)`
+                  }}
+                />
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Global Styles for Premium Animations */}
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(40px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes fadeInDown {
+          from {
+            opacity: 0;
+            transform: translateY(-40px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes scaleIn {
+          from {
+            opacity: 0;
+            transform: scale(0.9);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+        
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+        
+        .animate-fadeInUp {
+          animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+        
+        .animate-fadeInDown {
+          animation: fadeInDown 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+        
+        .animate-scaleIn {
+          animation: scaleIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+        
+        .delay-200 {
+          animation-delay: 0.2s;
+        }
+        
+        .delay-400 {
+          animation-delay: 0.4s;
+        }
+      `}</style>
+
+      {/* Font imports */}
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
     </section>
   );
 };
