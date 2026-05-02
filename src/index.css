@@ -95,3 +95,17 @@ html, body {
 .animation-delay-600 {
   animation-delay: 600ms;
 }
+
+
+/* Add dark blue color variable */
+:root {
+  --dark-blue: rgb(30, 41, 59);
+}
+
+.bg-dark-blue {
+  background-color: rgb(30, 41, 59);
+}
+
+.bg-dark-blue\/95 {
+  background-color: rgb(30, 41, 59);
+}

@@ -1,42 +1,72 @@
 // components/Header.js
 import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const navItems = [
-  "Home",
-  "About",
-  "Services",
-  "Projects",
-  "Why Choose Us",
-  "Contact",
+  { name: "Home", path: "/", section: "home" },
+  { name: "About", path: "/", section: "about" },
+  { name: "Services", path: "/", section: "services" },
+  { name: "Projects", path: "/", section: "projects" },
+  { name: "Our Products", path: "/hawkeye", section: "products" },
+  { name: "Why Choose Us", path: "/", section: "why-choose-us" },
+  { name: "Blog", path: "/", section: "blog" }, 
+  { name: "Contact", path: "/", section: "contact" },
 ];
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const location = useLocation();
 
-  // Detect scroll position + active section
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
 
-      const sections = navItems.map((item) =>
-        document.getElementById(item.toLowerCase().replace(/\s/g, "-"))
-      );
+      // Only track sections on home page
+      if (location.pathname === "/") {
+        const sections = navItems.map((item) =>
+          document.getElementById(item.section)
+        );
 
-      sections.forEach((section) => {
-        if (section) {
-          const rect = section.getBoundingClientRect();
-          if (rect.top <= 120 && rect.bottom >= 120) {
-            setActiveSection(section.id);
+        sections.forEach((section) => {
+          if (section) {
+            const rect = section.getBoundingClientRect();
+            if (rect.top <= 120 && rect.bottom >= 120) {
+              setActiveSection(section.id);
+            }
           }
-        }
-      });
+        });
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [location.pathname]);
+
+  const handleNavigation = (e, item) => {
+    e.preventDefault();
+    
+    // If it's the Products link, navigate to hawkeye page
+    if (item.path === "/hawkeye") {
+      window.location.href = "/hawkeye";
+      setIsMenuOpen(false);
+      return;
+    }
+    
+    // For all other links, handle scroll to section
+    if (location.pathname !== "/") {
+      // If not on home page, navigate to home then scroll
+      window.location.href = `/#${item.section}`;
+    } else {
+      // If on home page, scroll smoothly
+      const element = document.getElementById(item.section);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+    setIsMenuOpen(false);
+  };
 
   return (
     <header
@@ -49,40 +79,42 @@ const Header = () => {
       <div className="container mx-auto px-6 lg:px-8">
         <div className="flex justify-between items-center">
           {/* Logo Section */}
-          <div className="flex items-center">
+          <Link to="/" className="flex items-center">
             <img
               src="/images/logo1.png"
               alt="WishWall Logo"
               className="h-12 lg:h-14 object-contain transition-transform duration-300 hover:scale-105"
             />
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-4">
             {navItems.map((item) => {
-              const id = item.toLowerCase().replace(/\s/g, "-");
-              const isActive = activeSection === id;
+              const isActive = 
+                (location.pathname === "/" && activeSection === item.section) ||
+                (location.pathname === "/hawkeye" && item.name === "Our Products");
 
               return (
                 <a
-                  key={item}
-                  href={`#${id}`}
+                  key={item.name}
+                  href={item.path === "/hawkeye" ? "/hawkeye" : `/#${item.section}`}
+                  onClick={(e) => handleNavigation(e, item)}
                   className={`relative px-4 py-2 text-sm lg:text-base font-semibold transition-all duration-300 group
                     ${
                       isActive
-                        ? "text-secondary"
+                        ? "text-orange-500"
                         : isScrolled
-                        ? "text-secondary/70"
+                        ? "text-[#0f172a]/70"
                         : "text-white"
                     }
-                    hover:text-primary
+                    hover:text-orange-500
                   `}
                 >
-                  {item}
+                  {item.name}
 
                   {/* Underline */}
                   <span
-                    className={`absolute left-0 -bottom-1 h-0.5 bg-primary transition-all duration-300
+                    className={`absolute left-0 -bottom-1 h-0.5 bg-orange-500 transition-all duration-300
                       ${
                         isActive
                           ? "w-full"
@@ -99,7 +131,7 @@ const Header = () => {
           <button
             className={`md:hidden p-2 rounded-lg transition-all duration-300 ${
               isScrolled
-                ? "text-secondary hover:bg-secondary/10"
+                ? "text-[#0f172a] hover:bg-[#0f172a]/10"
                 : "text-white hover:bg-white/10"
             }`}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -134,35 +166,34 @@ const Header = () => {
           <div
             className={`md:hidden mt-4 rounded-2xl overflow-hidden shadow-xl animate-slideDown ${
               isScrolled
-                ? "bg-white border border-secondary/10"
-                : "bg-secondary/95 backdrop-blur-md border border-white/10"
+                ? "bg-white border border-[#0f172a]/10"
+                : "bg-[#0f172a]/95 backdrop-blur-md border border-white/10"
             }`}
           >
             <div className="flex flex-col py-2">
-              {navItems.map((item) => {
-                const id = item.toLowerCase().replace(/\s/g, "-");
-                const isActive = activeSection === id;
-
-                return (
-                  <a
-                    key={item}
-                    href={`#${id}`}
-                    className={`px-6 py-4 font-medium transition-all duration-300
-                      ${
-                        isActive
-                          ? "text-secondary bg-primary/10"
-                          : isScrolled
-                          ? "text-secondary"
-                          : "text-white"
-                      }
-                      hover:text-primary hover:bg-primary/10
-                    `}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {item}
-                  </a>
-                );
-              })}
+              {navItems.map((item) => (
+                <a
+                  key={item.name}
+                  href={item.path === "/hawkeye" ? "/hawkeye" : `/#${item.section}`}
+                  onClick={(e) => {
+                    handleNavigation(e, item);
+                    setIsMenuOpen(false);
+                  }}
+                  className={`px-6 py-4 font-medium transition-all duration-300
+                    ${
+                      (activeSection === item.section && location.pathname === "/") ||
+                      (location.pathname === "/hawkeye" && item.name === "Our Products")
+                        ? "text-orange-500 bg-orange-50"
+                        : isScrolled
+                        ? "text-[#0f172a]"
+                        : "text-white"
+                    }
+                    hover:text-orange-500 hover:bg-orange-50
+                  `}
+                >
+                  {item.name}
+                </a>
+              ))}
             </div>
           </div>
         )}

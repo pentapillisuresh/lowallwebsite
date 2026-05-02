@@ -140,7 +140,7 @@ const About = () => {
             </div>
 
             {/* Key Metrics - Clean Stats */}
-            <div className="grid grid-cols-3 gap-4 py-3">
+            <div className="grid grid-cols-3 gap-4">
               <div className="text-left" data-aos="fade-up" data-aos-delay="300">
                 <div className="text-2xl font-bold text-orange-500">20+</div>
                 <div className="text-xs text-gray-500 uppercase tracking-wider">Years</div>
